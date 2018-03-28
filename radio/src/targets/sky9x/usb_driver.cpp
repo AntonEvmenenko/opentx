@@ -31,29 +31,8 @@ extern void USBD_Disconnect(void);
 static usbMode selectedUsbMode = USB_UNSELECTED_MODE;
 static bool usbDriverStarted = false;
 
-static void configureUsbClock(void)
-{
-    /* Enable PLLB for USB */
-    PMC->CKGR_PLLBR = CKGR_PLLBR_DIVB(1)
-                    | CKGR_PLLBR_MULB(7)
-                    | CKGR_PLLBR_PLLBCOUNT_Msk;
-    while((PMC->PMC_SR & PMC_SR_LOCKB) == 0); // TODO  && (timeout++ < CLOCK_TIMEOUT));
-    /* USB Clock uses PLLB */
-    PMC->PMC_USB = PMC_USB_USBDIV(1)    /* /2   */
-                 | PMC_USB_USBS;        /* PLLB */
-}
-
 void usbStart()
 {
-  configureUsbClock();
-
-  if (selectedUsbMode == USB_JOYSTICK_MODE) {
-    usbJoystickInit();
-  } else if (selectedUsbMode == USB_MASS_STORAGE_MODE) {
-    usbMassStorageInit();
-  }
-
-  USBD_Connect();
   usbDriverStarted = true;
 }
 
@@ -61,7 +40,8 @@ void usbStop()
 {
   if (selectedUsbMode == USB_JOYSTICK_MODE) {
     usbJoystickDeinit();
-  } else if (selectedUsbMode == USB_MASS_STORAGE_MODE) {
+  }
+  else if (selectedUsbMode == USB_MASS_STORAGE_MODE) {
     usbMassStorageDeinit();
   }
 
@@ -86,7 +66,7 @@ void setSelectedUsbMode(int mode)
 
 void usbPluggedIn()
 {
-  usbMassStorage();
+
 }
 
 extern "C" void USBDDriverCallbacks_ConfigurationChanged(unsigned char cfgnum)
@@ -102,7 +82,8 @@ extern "C" void USBDCallbacks_RequestReceived(const USBGenericRequest *request)
 {
   if (selectedUsbMode == USB_JOYSTICK_MODE) {
     HIDDJoystickDriver_RequestHandler(request);
-  } else if (selectedUsbMode == USB_MASS_STORAGE_MODE){
+  }
+  else if (selectedUsbMode == USB_MASS_STORAGE_MODE) {
     MSDDriver_RequestHandler(request);
   }
 }

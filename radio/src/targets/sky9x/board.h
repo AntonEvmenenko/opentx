@@ -186,12 +186,10 @@ void lcdSetRefVolt(uint8_t val);
 void lcdSetContrast(void);
 
 // USB driver
-void usbMassStorageInit();
 void usbMassStorageDeinit();
 void usbMassStorage();
 
 #if !defined(SIMU)
-void usbJoystickInit();
 void usbJoystickDeinit();
 void usbJoystickUpdate();
 #endif

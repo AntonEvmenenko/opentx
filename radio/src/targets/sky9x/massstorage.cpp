@@ -32,6 +32,18 @@ unsigned char msdBuffer[MSD_BUFFER_SIZE];
 
 unsigned int msdReadTotal=0, msdWriteTotal=0;
 
+static void configureUsbClock(void)
+{
+    /* Enable PLLB for USB */
+    PMC->CKGR_PLLBR = CKGR_PLLBR_DIVB(1)
+                    | CKGR_PLLBR_MULB(7)
+                    | CKGR_PLLBR_PLLBCOUNT_Msk;
+    while((PMC->PMC_SR & PMC_SR_LOCKB) == 0); // TODO  && (timeout++ < CLOCK_TIMEOUT));
+    /* USB Clock uses PLLB */
+    PMC->PMC_USB = PMC_USB_USBDIV(1)    /* /2   */
+                 | PMC_USB_USBS;        /* PLLB */
+}
+
 /** Maximum number of LUNs which can be defined. */
 #define MAX_LUNS            1
 
@@ -148,31 +160,59 @@ static void MSDCallbacks_Data( unsigned char flowDirection, unsigned int dataLen
   showStatusLine();
 }
 
-void usbMassStorageInit()
-{
-  /* Initialize LUN */
-  MEDSdcard_Initialize(&(medias[DRV_SDMMC]), 0);
-
-  LUN_Init(&(luns[DRV_SDMMC]), &(medias[DRV_SDMMC]),
-      msdBuffer, MSD_BUFFER_SIZE,
-      0, 0, 0, 0,
-      MSDCallbacks_Data);
-
-  /* BOT driver initialization */
-  MSDDriver_Initialize(luns, 1);
-}
+static bool initialized = false;
 
 void usbMassStorageDeinit()
 {
+  LUN_Eject(&(luns[DRV_SDMMC]));
+
   msdReadTotal = 0;
   msdWriteTotal = 0;
+
+  initialized = false;
 }
 
 void usbMassStorage()
 {
-  /* Mass storage state machine */
-  for (uint8_t i=0; i<50; i++)
-    MSDDriver_StateMachine();
+  if (usbPlugged() && sd_card_ready()) {
+    TRACE_DEBUG("usbMassStorage\n\r");
+
+    if (sdMounted()) {
+      Card_state = SD_ST_DATA;
+      audioQueue.stopSD();
+      logsClose();
+      f_mount(NULL, "", 0); // unmount SD
+    }
+
+    if (!initialized) {
+
+      configureUsbClock();
+
+      /* Initialize LUN */
+      MEDSdcard_Initialize(&(medias[DRV_SDMMC]), 0);
+
+      LUN_Init(&(luns[DRV_SDMMC]), &(medias[DRV_SDMMC]),
+          msdBuffer, MSD_BUFFER_SIZE,
+          0, 0, 0, 0,
+          MSDCallbacks_Data);
+
+      /* BOT driver initialization */
+      MSDDriver_Initialize(luns, 1);
+
+      // VBus_Configure();
+      USBD_Connect();
+
+      initialized = true;
+    }
+
+    /* Mass storage state machine */
+    for (uint8_t i=0; i<50; i++)
+      MSDDriver_StateMachine();
+  }
+  else {
+    msdReadTotal = 0;
+    msdWriteTotal = 0;
+  }
 }
 
 #endif

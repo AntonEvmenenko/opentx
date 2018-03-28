@@ -51,6 +51,11 @@ void handleUsbConnection()
       usbPluggedIn();
     }
   }
+#if defined(PCBSKY9X)
+  if (usbStarted() && usbPlugged() && getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
+    usbMassStorage();
+  }
+#endif
   if (!usbStarted() && usbPlugged() && getSelectedUsbMode() == USB_UNSELECTED_MODE) {
     if((g_eeGeneral.USBMode == USB_UNSELECTED_MODE) && (popupMenuNoItems == 0)) {
       POPUP_MENU_ADD_ITEM(STR_USB_JOYSTICK);
