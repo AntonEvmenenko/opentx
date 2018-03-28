@@ -59,39 +59,13 @@ static USBDDriver usbdDriver;
 //-----------------------------------------------------------------------------
 /// Resets the state of the MSD driver
 //-----------------------------------------------------------------------------
-static void MSDDriver_Reset(void)
+void MSDDriver_Reset(void)
 {
     TRACE_INFO_WP("MSDReset ");
 
     msdDriver.state = MSDD_STATE_READ_CBW;
     msdDriver.waitResetRecovery = 0;
     msdDriver.commandState.state = 0;
-}
-
-//-----------------------------------------------------------------------------
-//         Callback re-implementation
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-/// Invoked when a new SETUP request is received from the host. Forwards the
-/// request to the Mass Storage device driver handler function.
-/// \param request  Pointer to a USBGenericRequest instance.
-//-----------------------------------------------------------------------------
-void USBDCallbacks_RequestReceived(const USBGenericRequest *request)
-{
-    MSDDriver_RequestHandler(request);
-}
-
-//-----------------------------------------------------------------------------
-/// Invoked when the configuration of the device changes. Resets the mass
-/// storage driver.
-/// \param cfgnum New configuration number.
-//-----------------------------------------------------------------------------
-void USBDDriverCallbacks_ConfigurationChanged(unsigned char cfgnum)
-{
-    if (cfgnum > 0) {
-
-        MSDDriver_Reset();
-    }
 }
 
 //-----------------------------------------------------------------------------

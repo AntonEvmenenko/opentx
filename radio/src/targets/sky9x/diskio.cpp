@@ -1009,11 +1009,33 @@ void sdInit()
   Card_initialized = 1;
 }
 
+#if defined(LOG_TELEMETRY)
+FIL g_telemetryFile = {};
+#endif
+
+void sdMount()
+{
+  TRACE("sdMount");
+  if (f_mount(&g_FATFS_Obj, "", 1) == FR_OK) {
+    // call sdGetFreeSectors() now because f_getfree() takes a long time first time it's called
+    sdGetFreeSectors();
+    Card_state = SD_ST_MOUNTED;
+
+#if defined(LOG_TELEMETRY)
+    f_open(&g_telemetryFile, LOGS_PATH "/telemetry.log", FA_OPEN_ALWAYS | FA_WRITE);
+    if (f_size(&g_telemetryFile) > 0) {
+      f_lseek(&g_telemetryFile, f_size(&g_telemetryFile)); // append
+    }
+#endif
+  }
+}
+
 void sdDone()
 {
   if (sdMounted()) {
     audioQueue.stopSD();
     f_mount(NULL, "", 0); // unmount SD
+    Card_state = SD_ST_UNMOUNTED;
   }
 }
 

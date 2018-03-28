@@ -213,35 +213,6 @@ static void HIDDJoystickDriver_SetReport(unsigned char type,
 }
 
 //------------------------------------------------------------------------------
-//         Optional RequestReceived() callback re-implementation
-//------------------------------------------------------------------------------
-#if !defined(NOAUTOCALLBACK)
-
-//------------------------------------------------------------------------------
-/// Callback function when new request receivce from host
-/// \param request Pointer to the USBGenericRequest instance
-//------------------------------------------------------------------------------
-void USBDCallbacks_RequestReceived(const USBGenericRequest *request)
-{
-    HIDDJoystickDriver_RequestHandler(request);
-}
-
-#endif
-
-//------------------------------------------------------------------------------
-//         ConfigurationChanged() callback re-implementation
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-/// Callback function when configureation changed
-/// \param cfgnum New configuration number
-//------------------------------------------------------------------------------
-void USBDDriverCallbacks_ConfigurationChanged(unsigned char cfgnum)
-{
-    (void)cfgnum;
-}
-
-//------------------------------------------------------------------------------
 //      Exported functions
 //------------------------------------------------------------------------------
 

@@ -501,6 +501,7 @@
 #define SD_ST_TRAN              8
 #define SD_ST_DATA              9
 #define SD_ST_MOUNTED           10
+#define SD_ST_UNMOUNTED         11
 
 extern uint32_t Cmd_A41_resp;
 extern int32_t Card_state;

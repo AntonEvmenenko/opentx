@@ -59,6 +59,12 @@
   #define CASE_STM32(x)
 #endif
 
+#if defined(STM32) || defined(PCBSKY9X)
+  #define CASE_STM32_OR_PCBSKY9X(x) x,
+#else
+  #define CASE_STM32_OR_PCBSKY9X(x)
+#endif
+
 #if defined(VARIO) && defined(CPUARM)
   #define CASE_VARIO_CPUARM(x) x,
 #else
@@ -1730,7 +1736,7 @@ FORCEINLINE void convertUnit(getvalue_t & val, uint8_t & unit)
   extern const pm_uchar logo_taranis[];
 #endif
 
-#if defined(STM32)
+#if defined(STM32) || defined(PCBSKY9X)
 void usbPluggedIn();
 #endif
 

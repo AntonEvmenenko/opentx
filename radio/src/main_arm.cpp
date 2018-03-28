@@ -24,7 +24,7 @@ uint8_t currentSpeakerVolume = 255;
 uint8_t requiredSpeakerVolume = 255;
 uint8_t mainRequestFlags = 0;
 
-#if defined(STM32)
+#if defined(STM32) || defined(PCBSKY9X)
 void onUSBConnectMenu(const char *result)
 {
   if (result == STR_USB_MASS_STORAGE) {
@@ -33,15 +33,17 @@ void onUSBConnectMenu(const char *result)
   else if (result == STR_USB_JOYSTICK) {
     setSelectedUsbMode(USB_JOYSTICK_MODE);
   }
+#if !defined(PCBSKY9X)
   else if (result == STR_USB_SERIAL) {
     setSelectedUsbMode(USB_SERIAL_MODE);
   }
+#endif
 }
 #endif
 
 void handleUsbConnection()
 {
-#if defined(STM32) && !defined(SIMU)
+#if (defined(STM32) || defined(PCBSKY9X)) && !defined(SIMU)
   if (!usbStarted() && usbPlugged() && !(getSelectedUsbMode() == USB_UNSELECTED_MODE)) {
     usbStart();
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
@@ -53,7 +55,7 @@ void handleUsbConnection()
     if((g_eeGeneral.USBMode == USB_UNSELECTED_MODE) && (popupMenuNoItems == 0)) {
       POPUP_MENU_ADD_ITEM(STR_USB_JOYSTICK);
       POPUP_MENU_ADD_ITEM(STR_USB_MASS_STORAGE);
-#if defined(DEBUG)
+#if defined(DEBUG) && !defined(PCBSKY9X)
       POPUP_MENU_ADD_ITEM(STR_USB_SERIAL);
 #endif
       POPUP_MENU_START(onUSBConnectMenu);

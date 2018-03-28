@@ -107,7 +107,7 @@ enum MenuRadioSetupItems {
   IF_FAI_CHOICE(ITEM_SETUP_FAI)
   CASE_MAVLINK(ITEM_MAVLINK_BAUD)
   CASE_CPUARM(ITEM_SETUP_SWITCHES_DELAY)
-  CASE_STM32(ITEM_SETUP_USB_MODE)
+  CASE_STM32_OR_PCBSKY9X(ITEM_SETUP_USB_MODE)
   ITEM_SETUP_RX_CHANNEL_ORD,
   ITEM_SETUP_STICK_MODE_LABELS,
   ITEM_SETUP_STICK_MODE,
@@ -565,7 +565,7 @@ void menuRadioSetup(event_t event)
         if (attr) CHECK_INCDEC_GENVAR(event, g_eeGeneral.switchesDelay, -15, 100-15);
         break;
 #endif
-#if defined(STM32)
+#if defined(STM32) || defined(PCBSKY9X)
       case ITEM_SETUP_USB_MODE:
         g_eeGeneral.USBMode = editChoice(RADIO_SETUP_2ND_COLUMN, y, STR_USBMODE, STR_USBMODES, g_eeGeneral.USBMode, USB_UNSELECTED_MODE, USB_MAX_MODE, attr, event);
         break;

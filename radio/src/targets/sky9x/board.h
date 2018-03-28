@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include "board_lowlevel.h"
 #include "audio_driver.h"
+#include "usb_driver.h"
 
 extern uint16_t ResetReason;
 
@@ -185,9 +186,13 @@ void lcdSetRefVolt(uint8_t val);
 void lcdSetContrast(void);
 
 // USB driver
+void usbMassStorageInit();
+void usbMassStorageDeinit();
 void usbMassStorage();
 
 #if !defined(SIMU)
+void usbJoystickInit();
+void usbJoystickDeinit();
 void usbJoystickUpdate();
 #endif
 
@@ -270,6 +275,7 @@ void disable_sbusOut(uint32_t module_index);
 // SD driver
 #if defined(SIMU)
 #define sdInit()
+#define sdMount()
 #define sdDone()
 #else
 #define sdPoll10ms()
@@ -278,6 +284,7 @@ extern "C" {
 #endif
   void init_SDcard();
   void sdInit();
+  void sdMount();
   void sdDone();
   uint32_t sd_card_ready();
   uint32_t sdMounted();
