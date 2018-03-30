@@ -403,6 +403,7 @@ void guiMain(event_t evt)
 
 void perMain()
 {
+  TRACE_DEBUG("Ping\n\r");
   DEBUG_TIMER_START(debugTimerPerMain1);
 #if defined(PCBSKY9X) && !defined(REVA)
   calcConsumption();

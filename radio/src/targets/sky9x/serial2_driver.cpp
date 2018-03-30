@@ -30,6 +30,8 @@
 
 Fifo<uint8_t, 512> serial2RxFifo;
 
+#define PRINTF_BUFFER_SIZE    128
+
 #if !defined(SIMU)
 /*
  * Outputs a character on the UART line.
@@ -112,7 +114,7 @@ extern "C" void UART0_IRQHandler()
 #if defined(TELEMETRY_FRSKY)
 void serial2TelemetryInit(unsigned int /*protocol*/)
 {
-  SECOND_UART_Configure(FRSKY_D_BAUDRATE, Master_frequency);
+//  SECOND_UART_Configure(FRSKY_D_BAUDRATE, Master_frequency);
 }
 
 bool telemetrySecondPortReceive(uint8_t & data)
@@ -121,6 +123,36 @@ bool telemetrySecondPortReceive(uint8_t & data)
 }
 #endif
 
+extern "C" void _sbrk(void){}
+
+
 #if defined(DEBUG) && !defined(SIMU)
-void serialPrintf(const char*, ... ) {}
+void serialPrintf(const char * format, ...)
+{
+  static bool initialized = false;
+
+  if (!initialized) {
+    SECOND_UART_Configure(FRSKY_D_BAUDRATE, Master_frequency);
+    initialized = true;
+  }
+
+  va_list arglist;
+  char tmp[PRINTF_BUFFER_SIZE+1];
+
+  va_start(arglist, format);
+  vsnprintf(tmp, PRINTF_BUFFER_SIZE, format, arglist);
+  tmp[PRINTF_BUFFER_SIZE] = '\0';
+  va_end(arglist);
+
+  const char *t = tmp;
+  while (*t) {
+    serial2Putc(*t++);
+  }
+}
+
+void serialCrlf()
+{
+  serialPutc('\r');
+  serialPutc('\n');
+}
 #endif

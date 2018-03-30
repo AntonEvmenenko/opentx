@@ -48,7 +48,7 @@ uint8_t serial2TracesEnabled();
 #elif defined(DEBUG) && defined(CPUARM) && defined(SERIAL2)
   #define debugPrintf(...) do { serialPrintf(__VA_ARGS__); } while(0)
 #else
-  #define debugPrintf(...)
+  #define debugPrintf(...) do { serialPrintf(__VA_ARGS__); } while(0)
 #endif
 
 #if defined(__cplusplus)
