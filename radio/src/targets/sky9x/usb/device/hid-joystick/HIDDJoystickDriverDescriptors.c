@@ -146,9 +146,9 @@ const unsigned char hiddReportDescriptor[] = {
             HIDReport_LOCAL_USAGE + 1, HIDGenericDesktop_Z_ROTATION,    // USAGE (Rz)
             HIDReport_LOCAL_USAGE + 1, HIDGenericDesktop_SLIDER,        // USAGE (Slider)
             HIDReport_LOCAL_USAGE + 1, HIDGenericDesktop_SLIDER,        // USAGE (Slider)
-            HIDReport_GLOBAL_LOGICALMINIMUM + 1, (unsigned char) -127,  // LOGICAL_MINIMUM (-127)
-            HIDReport_GLOBAL_LOGICALMAXIMUM + 1, 127,                   // LOGICAL_MAXIMUM (127)
-            HIDReport_GLOBAL_REPORTSIZE + 1, 8,                         // REPORT_SIZE (8)
+            HIDReport_GLOBAL_LOGICALMINIMUM + 2, 0x00, 0x00,            // LOGICAL_MINIMUM (0)
+            HIDReport_GLOBAL_LOGICALMAXIMUM + 2, 0xFF, 0x07,            // LOGICAL_MAXIMUM (2047)
+            HIDReport_GLOBAL_REPORTSIZE + 1, 16,                        // REPORT_SIZE (16)
             HIDReport_GLOBAL_REPORTCOUNT + 1, 8,                        // REPORT_COUNT (8)
             HIDReport_INPUT + 1, HIDReport_VARIABLE,                    // INPUT (Data,Var,Abs)
         HIDReport_ENDCOLLECTION,                                        // END_COLLECTION

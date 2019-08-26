@@ -57,7 +57,7 @@ void usbJoystickUpdate()
       initialized = true;
     }
 
-    static uint8_t HID_Buffer[11];
+    static uint8_t HID_Buffer[19];
 
     HID_Buffer[0] = 0;
     HID_Buffer[1] = 0;
@@ -77,10 +77,11 @@ void usbJoystickUpdate()
     //analog values
     //uint8_t * p = HID_Buffer + 1;
     for (int i = 0; i < 8; ++i) {
-      int16_t value = channelOutputs[i] / 8;
-      if ( value > 127 ) value = 127;
-      else if ( value < -127 ) value = -127;
-      HID_Buffer[i+3] = static_cast<int8_t>(value);
+      int16_t value = channelOutputs[i] + 1024;
+      if ( value > 2047 ) value = 2047;
+      else if ( value < 0 ) value = 0;
+      HID_Buffer[i*2 +3] = static_cast<uint8_t>(value & 0xFF);
+      HID_Buffer[i*2 +4] = static_cast<uint8_t>((value >> 8) & 0x07);
     }
 
     HIDDJoystickDriver_ChangeJoystickState((HIDDJoystickInputReport*)&HID_Buffer);

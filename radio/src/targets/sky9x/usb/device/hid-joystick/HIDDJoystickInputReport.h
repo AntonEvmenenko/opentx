@@ -56,19 +56,22 @@
 /// HID input report structure used by the Joystick driver to notify the
 /// host of pressed keys.
 //------------------------------------------------------------------------------
+
+#include <inttypes.h>
+
 typedef struct {
 
-    unsigned char buttons1; // bit 0 - button 1, bit 1 - button 2, ..., mapped to channels 9-16, on if channel > 0
-    unsigned char buttons2; // mapped to channels 17-24, on if channel > 0
-    unsigned char buttons3; // mapped to channels 25-32, on if channel > 0
-    unsigned char X;        // analog value, mapped to channel 1
-    unsigned char Y;        // analog value, mapped to channel 2
-    unsigned char Z;        // analog value, mapped to channel 3
-    unsigned char Rx;       // analog value, mapped to channel 4
-    unsigned char Ry;       // analog value, mapped to channel 5
-    unsigned char Rz;       // analog value, mapped to channel 6
-    unsigned char S1;       // analog value, mapped to channel 7
-    unsigned char S2;       // analog value, mapped to channel 8
+    uint8_t buttons1; // bit 0 - button 1, bit 1 - button 2, ..., mapped to channels 9-16, on if channel > 0
+    uint8_t buttons2; // mapped to channels 17-24, on if channel > 0
+    uint8_t buttons3; // mapped to channels 25-32, on if channel > 0
+    uint16_t X;       // analog value, mapped to channel 1
+    uint16_t Y;       // analog value, mapped to channel 2
+    uint16_t Z;       // analog value, mapped to channel 3
+    uint16_t Rx;      // analog value, mapped to channel 4
+    uint16_t Ry;      // analog value, mapped to channel 5
+    uint16_t Rz;      // analog value, mapped to channel 6
+    uint16_t S1;      // analog value, mapped to channel 7
+    uint16_t S2;      // analog value, mapped to channel 8
 
 } __attribute__ ((packed)) HIDDJoystickInputReport; // GCC
 
